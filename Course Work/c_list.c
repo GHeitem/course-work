@@ -1,6 +1,6 @@
 #include "c_list.h"
 #include <stdlib.h>
-
+//Shiiiiiiiit
 void init(list *l){
 	extern int error;
 	l->start=(element *)malloc(sizeof(element));
