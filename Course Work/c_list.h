@@ -8,17 +8,18 @@
 #define MAX 100
 
 int error;
+typedef struct  element *ptrel;
 typedef struct element{
-	element * similar;
+	ptrel  similar;
 	struct p_point a;
-	element * next;
+	ptrel next;
 	int isIn;
 } element;
 
 typedef struct list{
-	element *start;
+	ptrel start;
 	int size;
-	element *ptr;
+	ptrel ptr;
 } list;
 void readnext(list *l,struct p_point *a);
 void init(list *);

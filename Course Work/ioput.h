@@ -1,7 +1,7 @@
 #ifndef IOPUT_H
 
 #define IOPUT_H
-#include "math.h"
+#include "geometry.h"
 #include <stdio.h>
 int putPoint(FILE *,struct t_point); 
 int getPoint(FILE *,struct t_point *);

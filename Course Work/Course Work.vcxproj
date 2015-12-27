@@ -65,8 +65,10 @@
     <ClCompile Include="c_list.c" />
     <ClCompile Include="ioput.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="math.c" />
-    <ClCompile Include="geometry.h" />
+    <ClCompile Include="geometry.c" />
+    <ClCompile Include="geometry.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClCompile>
     <ClCompile Include="planimetria.c" />
   </ItemGroup>
   <ItemGroup>

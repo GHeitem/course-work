@@ -18,9 +18,6 @@
     <ClCompile Include="ioput.c">
       <Filter>Заголовочные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="math.c">
-      <Filter>Заголовочные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="planimetria.c">
       <Filter>Заголовочные файлы</Filter>
     </ClCompile>
@@ -31,6 +28,9 @@
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
     <ClCompile Include="geometry.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="geometry.c">
       <Filter>Заголовочные файлы</Filter>
     </ClCompile>
   </ItemGroup>

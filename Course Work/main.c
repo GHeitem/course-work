@@ -1,51 +1,60 @@
-#include "math.h"
+#define _CRT_SECURE_NO_WARNINGS
+#include "geometry.h"
 #include "ioput.h"
+#include <stdlib.h>
 
-int menu(FILE *in, FILE *out){
+int menu(FILE **in, FILE **out){
 	int key;
 	char path[20];
+	printf("Accuracy: ");
+	scanf("%lf", &eps);
 	printf("1- Keyboard. 2- File...");
 	scanf("%d", &key);
 	switch (key){
-	case 1: in = stdin; break;
-	case 2: printf("File name: "); scanf("%s", path); in = fopen(path, "r"); break;
+	case 1: *in = stdin; break;
+	case 2: printf("\nFile name: "); 
+		scanf("%s", path); 
+		*in = fopen(path, "r");
+		if (*in==NULL){
+			printf("\nIllegal file name!");
+			return 0;
+		}; break;
 	default: printf("\nIllegal choice"); return 0;
 	};
 	printf("1- Monitor. 2- File...");
 	scanf("%d", &key);
 	switch (key){
-	case 1: out = stdout; break;
-	case 2: printf("File name: "); scanf("%s", path); out = fopen(path, "r"); break;
+	case 1: *out = stdout; break;
+	case 2: printf("'\nFile name: "); 
+		scanf("%s", path); 
+		*out = fopen(path, "w"); 
+		if (*out==NULL){
+			printf("\nIllegal file name!");
+			return 0;
+		};
+	break;
 	default: printf("\nIllegal choice"); return 0;
 	};
 	return 1;
 };
 
 int main(){
+	extern double eps;
 	//Объявление переменных:
-	FILE *in = NULL, *out = NULL;
-	int M, N;
-	struct t_point*P, *Q, *intersect;
-	int k;
-	//Выполнение
-	printf("Size of first:\n ");
-	scanf("%d", &M);
-	printf("Size of second: \n");
-	scanf("%d", &N);
-	if (menu(in, out) && (M > 3) && (N > 4)){
-		P = (struct t_point*)calloc(M, sizeof(struct t_point));
-		Q = (struct t_point*)calloc(N, sizeof(struct t_point));
-		printf("Input verices of P\n");
-		getPoints(in, P, M);
-		printf("Input verices of Q\n");
-		getPoints(in, Q, N);
-		if (PointsArePoly(P, M) && (PointsArePoly(Q, N))){
-			if (inOnePlane(P, M, Q, N)){
-				intersect1(P, M, Q, N, intersect, k);
-			}
-			else
-			{
-				intersect2(P, M, Q, N, intersect, k);
-			}
-		}
-
+	t_point *P=NULL;
+	FILE *in=NULL, *out=NULL;
+	int M;
+	if (menu(&in, &out)){
+		printf("\nHow many vertices has polygon (>3):");
+		scanf("%d", &M);
+		if (M >= 3){
+			P = (t_point*)calloc(M, sizeof(t_point));
+			getPoints(in, P, M);
+			is_convex_polygon(P, M) ? printf("\nIts convex polygon.") : printf("Not a convex polygon");
+			free(P);
+		};
+	};
+	getch();
+	fclose(in);
+	fclose(out);
+}; 

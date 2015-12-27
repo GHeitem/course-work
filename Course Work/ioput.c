@@ -3,13 +3,13 @@
 #include "ioput.h"
 #include <stdio.h>
 
-int getPoint(FILE *file, struct t_point *point){
+int getPoint(FILE *file,  t_point *point){
 	return  fscanf(file, " (%lf;%lf;%lf)", &(point->x), &(point->y), &(point->z));
 };
-int  putPoint(FILE *file, struct t_point point){
+int  putPoint(FILE *file, t_point point){
   return fprintf(file, "(%.3lf;%.3lf;%.3lf) ",point.x,point.y, point.z);
 };
-void getPoints(FILE *file, struct t_point *arr, int size){
+void getPoints(FILE *file,  t_point *arr, int size){
 	int i = 0;
 	while (!feof(file)&&(i<size)){
 
@@ -17,7 +17,7 @@ void getPoints(FILE *file, struct t_point *arr, int size){
 	};
 	
 }
-void putPoints(FILE *file, struct t_point *arr, int size){
+void putPoints(FILE *file, t_point *arr, int size){
 	
 	
 	for (int i = 0;(i < size); i++){

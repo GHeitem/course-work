@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "c_list.h"
-#define NULL 0
 const int UNK=0;
 const int PIN=1;
 const int QIN=2;
@@ -49,7 +48,7 @@ void normalize(struct p_line *edges, int size,struct p_point a){
 		};
 	};
 };
-struct p_vect pointsVector(struct p_point beg, struct p_vect end){
+struct p_vect pointsVector(struct p_point beg, struct p_point end){
 	struct p_vect l;
 	l.alpha=end.alpha-beg.alpha;
 	l.beta=end.beta-beg.beta;
@@ -201,7 +200,3 @@ int intersection1(struct p_point * P, int M, struct p_point *Q, int N,struct p_p
 	};
 	return k;
 };
-int intersection2(struct p_point * P, int M, struct p_point *Q, int N,struct p_point *interfig)
-
-
-

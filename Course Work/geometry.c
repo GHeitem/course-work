@@ -1,5 +1,6 @@
 #include "geometry.h"
 #include "c_list.h"
+#include <stdlib.h>
 #include <math.h>
 const struct t_vect i_ = { 1, 0, 0 };
 const struct t_vect j_ = { 0, 1, 0 };
@@ -69,7 +70,7 @@ t_bool is_convex(t_point *arr, t_size size){
 	pred = points_vector(arr[0], arr[size - 1]);
 	next = points_vector(arr[0], arr[1]);
 	l = vector_product(pred, next);
-	int i = 1;
+	t_size i = 1;
 	while ((i < size) && (same_direction(l, vector_product(pred, next)))){
 		pred = points_vector(arr[i], arr[i - 1]);
 		next = points_vector(arr[i], arr[(i + 1) % size]);
