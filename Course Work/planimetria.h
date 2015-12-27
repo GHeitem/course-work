@@ -1,16 +1,16 @@
 typedef struct p_point{
 	double alpha;
 	double beta;
-};
+}p_point;
 typedef struct p_vect{
 	double alpha;
 	double beta;
-};
-double eps=0.0001;
+}p_vect;
+
 typedef struct p_line{
 	p_point a;
 	p_vect l; //Направляющий вектор
-};
+}p_line;
 
 double position(struct p_line, struct p_point);
 void reverse(struct p_vect *);

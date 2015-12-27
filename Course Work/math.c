@@ -1,117 +1,98 @@
-#include "math.h"
+#include "geometry.h"
 #include "c_list.h"
+#include <math.h>
 const struct t_vect i_ = { 1, 0, 0 };
 const struct t_vect j_ = { 0, 1, 0 };
 const struct t_vect k_ = { 0, 0, 1 };
 const struct t_point o_ = { 0, 0, 0 };
-
-int atPlane(struct t_plane Alpha, struct t_point point)
-//Возвращает 1, если точка point лежит в плоскости Alpha
-{
-	return Alpha.A*point.x + Alpha.B*point.y + Alpha.C*point.z + Alpha.D == 0;
-};
-struct t_vect VectorMultiply(struct t_vect A, struct t_vect B){
-	//Возвращает вектор, равный векторному произведению А и В.
-	struct t_vect N;
-	N.x = (A.y*B.z - A.z*B.y);
-	N.y = -(A.x*B.z - A.z*B.x);
-	N.z = (A.x*B.y - A.y*B.x);
-	return N;
-
+const  t_vect v0 = { 0, 0, 0 };
+extern double eps;
+#define sqr(a) a*a
+#define REQ(a,b) fabs(a-b)<eps
+//равенство вещественных чисел
+t_bool is_convex_polygon(t_point *arr, t_size size){
+	return is_polygon(arr, size) && is_convex(arr, size);
 }
-struct  t_vect VectorFromPoints(struct t_point begin, struct t_point end){
-	//Возвращает вектор, имеющий направление от точки begin к end.
-	struct t_vect tmp;
+t_bool is_polygon(t_point *arr, t_size size){
+	t_bool flag = 1;
+	t_size i = 3;
+	t_plane PL;
+	points_plane(arr[0], arr[1], arr[2],&PL);
+	while (flag && (i < size)){
+		flag = belong(PL, arr[i]);
+		i++;
+	};
+	return flag;
+}
+t_bool points_plane(t_point a, t_point b, t_point c,t_plane *PL){
+	t_vect ab, ac, N;
+	double D;
+	t_bool flag;
+	ab = points_vector(a, b);
+	ac = points_vector(a, c);
+	N = vector_product(ab, ac);
+	if (!equivalent(N, v0)){//Равенство векторов N и нуль-вектора означает, что а,б,с лежат на одной или на параллельных прямых.
+		D = -(N.x*a.x + N.y*a.y + N.z*a.z);
+		PL->N = N;
+		PL->D = D;
+		flag = 1;
+	}
+	else
+	{
+		PL = NULL;
+		flag = 0;
+	}
+	return flag;
+}
+t_vect points_vector(t_point begin, t_point end){
+	t_vect tmp;
 	tmp.x = end.x - begin.x;
 	tmp.y = end.y - begin.y;
 	tmp.z = end.z - begin.z;
 	return tmp;
 }
-struct t_plane PlaneWithNVector(struct t_vect N, struct t_point M){
-	//Возвращает плоскость с нормальным вектором N, содержащий точку M.
-	struct t_plane tmp;
-	//Коэффициенты А,В,С - координаты нормального вектора.
-	//Д находим подстановкой в уравнение плоскости координат точки М.
-	tmp.A = N.x;
-	tmp.B = N.y;
-	tmp.C = N.z;
-	tmp.D = -(tmp.A*M.x + tmp.B*M.y + tmp.C*M.z);
+t_bool belong(t_plane alpha, t_point a){
+	return fabs(alpha.N.x*a.x + alpha.N.y*a.y + alpha.N.z*a.z+alpha.D)<eps; 
+}
+t_vect vector_product(t_vect a, t_vect b){
+	t_vect tmp;
+	tmp.x = a.y*b.z - b.y*a.z;
+	tmp.y = -(a.x*b.z - b.x*a.z);
+	tmp.z = a.x*b.y - a.y*b.x;
 	return tmp;
 }
-struct  t_plane PlaneFromPoints(struct t_point A, struct t_point B, struct t_point C){
-	//Возвращает плоскость, содержащую точки А,В и С.
-	struct t_plane tmp;
-	struct t_vect BA = VectorFromPoints(B, A), BC = VectorFromPoints(B, C), N; //Формируем векторы, выходящие из одной точки (В) и лежащие на плоскости.
-	N = VectorMultiply(BA, BC); //Вычисляем нормальный вектор плоскости как векторное произведение векторов, лежащих в плоскости.
-	tmp =PlaneWithNVector(N, B);
-	return tmp;
-};
-int PointsOnPlane(struct t_plane alpha, struct t_point * arr, int size){
-	//Возвращате 1, если последовательность точек, записанная в массиве arr длины size 
-	//содержится в плоскости alpha
-	int flag=1, i = 0;
-	while (flag && (i < size)){
-		flag = atPlane(alpha, arr[i]);
-	};
-	return flag;
-};
-struct t_line LineFromPoints(struct t_point A, struct t_point B){
-	//Возвращает линию, содержащую точки A и B.
-	struct t_line tmp;
-	tmp.l = VectorFromPoints(A, B);
-	tmp.point = A;
-	return tmp;
-};
-double ScalarMultiply(struct t_vect a, struct t_vect b){
-	//Возвращает скалярное произведение векторов а и б
-	return a.x*b.x + a.y*b.y + a.z*b.z;
+t_bool equivalent(t_vect a, t_vect b){
+	return (REQ(a.x, b.x) && REQ(a.y, b.y) && REQ(a.z, b.z));
 }
-struct t_vect VectMultipleScalar(struct t_vect vector, double scalar){
-	struct t_vect tmp;
-	tmp.x = vector.x*scalar;
-	tmp.y = vector.y*scalar;
-	tmp.z = vector.z*scalar;
-	return tmp;
-}
-int Collinear(struct t_vect a, struct t_vect b){
-	return (ScalarMultiply(a,b)-eps==0);
-}
-int PointsArePoly(struct t_point *arr, int size){
-	int flag = 1, i = 0;
-	struct t_vect BA, BC, N;
-	BA = VectorFromPoints(arr[i], arr[size - 1]);
-	BC = VectorFromPoints(arr[i], arr[i + 1]);
-	N = VectorMultiply(BA, BC);
-	i++;
-	while (flag && (i < size)){
-		BA = VectorFromPoints(arr[i],arr[(i+size-1)%size]);
-		BC = VectorFromPoints(arr[i],arr[(i+1)%size]);
-		flag = Collinear(N, VectorMultiply(BA, BC))>0;
+t_bool is_convex(t_point *arr, t_size size){
+	t_vect pred, next, l;
+	pred = points_vector(arr[0], arr[size - 1]);
+	next = points_vector(arr[0], arr[1]);
+	l = vector_product(pred, next);
+	int i = 1;
+	while ((i < size) && (same_direction(l, vector_product(pred, next)))){
+		pred = points_vector(arr[i], arr[i - 1]);
+		next = points_vector(arr[i], arr[(i + 1) % size]);
 		i++;
 	};
-	return flag;
+	return i == size;
 }
-void ProectionToCoord(struct t_point *arr, struct p_point *pr, int size, struct t_vect N){
-	//Спроецировать arr в pr на плоскость с нормальным вектором N
-	for (int i=0; i<size;i++){
-		pr[i]=proec(arr[i],N);
-	};
-};
-struct p_point proec(struct t_point a, struct t_vect N){
-	struct p_point tmp; int flag=0;
-	if (!N.x){
-		tmp.alpha=a.x;
-	}
-	else {
-		tmp.alpha=a.y;
-		tmp.beta=a.z;
-		flag=1;
-	};
-	if (!N.y&&!flag){
-		tmp.beta=a.y;
+t_bool same_direction(t_vect a, t_vect b){
+	return (cos_vector(a, b) > 0);
+}
+double cos_vector(t_vect a, t_vect b){
+	double tmp;
+	if (!equivalent(a, v0) && !equivalent(b, v0)){
+		tmp = dot_product(a, b) / (vector_length(a)*vector_length(b));
 	}
 	else{
-		tmp.beta=a.z;
+		tmp = 0;
 	};
 	return tmp;
-};
+}
+double dot_product(t_vect a, t_vect b){
+	return a.x*b.x + a.y*b.y + a.z*b.z;
+}
+double vector_length(t_vect a){
+	return sqrt(sqr(a.x) + sqr(a.y) + sqr(a.z));
+}

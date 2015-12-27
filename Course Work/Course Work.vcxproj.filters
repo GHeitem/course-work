@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="math.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="ioput.c">
       <Filter>Заголовочные файлы</Filter>
     </ClCompile>
@@ -32,6 +29,9 @@
     </ClCompile>
     <ClCompile Include="main.c">
       <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="geometry.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
