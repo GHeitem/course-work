@@ -5,6 +5,7 @@
 #define UNDER 2
 
 #include "planimetria.h"
+#include <stdio.h>
 #define MAX 100
 
 int error;
@@ -34,6 +35,8 @@ void moveTo(list *, int);
 void toStart(list *);
 int end(list *);
 void toEnd(list *);
+void print_list(FILE *, list *);
+void go_to(list *, unsigned);
 
 #endif
 

@@ -27,4 +27,7 @@ double Dot( p_vect, p_vect);
 int inside( p_line *, int,  p_point, p_line *);
 int signProd( p_vect,  p_vect);
 void linesFigure( p_point*,int, p_line *);
+double area_poly(p_point *, int);
+double distance_between(p_point, p_point);
+void intersection1(p_point * P, int M, p_point *Q, int N, p_point *interfig, int *size);
 #endif
