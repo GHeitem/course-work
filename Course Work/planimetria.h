@@ -24,10 +24,11 @@ int figInfig( p_point*, int,  p_point *, int,  p_point *, double *, double *);
 int lineXline( p_line,  p_line,  p_point *);
  p_line pointsLine( p_point,  p_point);
 double Dot( p_vect, p_vect);
-int inside( p_line *, int,  p_point, p_line *);
+int inside( p_line *, int,  p_point);
 int signProd( p_vect,  p_vect);
 void linesFigure( p_point*,int, p_line *);
 double area_poly(p_point *, int);
 double distance_between(p_point, p_point);
 void intersection1(p_point * P, int M, p_point *Q, int N, p_point *interfig, int *size);
+int is_vertex(p_point *P, int size, p_point a);
 #endif

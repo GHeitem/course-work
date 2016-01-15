@@ -153,18 +153,17 @@ void intersection_1(t_point* P, t_size M, t_point *Q, t_size N,double* area, dou
 	p_point *prP = (p_point*)calloc(M, sizeof(p_point));
 	p_point *prQ = (p_point*)calloc(N, sizeof(p_point));
 	p_point *inter = (p_point*)calloc(N+M, sizeof(p_point));
-	t_plane tmp, tmp2;
+	t_plane *tmp = (t_plane*)calloc(1, sizeof(t_plane));
 	t_vect sour;
 	t_size k;
 	double angle;
 	if ((Q != NULL) && (P != NULL)){
-		points_plane(P[0], P[1], P[2], &tmp);
-		points_plane(Q[0], Q[1], Q[2], &tmp2);
-		if (plane_equivalent(tmp, tmp2)){
-			sour = proect_to_not_ortog(tmp);
-			angle = cos_vector(sour, tmp.N);
+		points_plane(P[0], P[1], P[2], tmp);
+		if (tmp){
+			sour = proect_to_not_ortog(*tmp);
+			angle = cos_vector(sour, tmp->N);
 			polygon_proection(P, M, prP, sour);
-			polygon_proection(Q, N, prP, sour);
+			polygon_proection(Q, N, prQ, sour);
 			intersection1(prP, M, prQ, N, inter, &k);
 			switch (k){
 			case 0:{
@@ -176,19 +175,19 @@ void intersection_1(t_point* P, t_size M, t_point *Q, t_size N,double* area, dou
 			case 1:{
 				*area = 0;
 				*length = 0;
-				reproect(inter[0], sour, tmp, in);
+				reproect(inter[0], sour, *tmp, in);
 				break;
 			};
 			case 2:{
 				*area = 0;
 				in = NULL;
-				*length = distance_between(inter[0], inter[1])*angle;
+				*length = fabs(distance_between(inter[0], inter[1])*angle);
 				break;
 			};
 			default:{
 				*length = 0;
 				in = NULL;
-				*area = area_poly(inter, k)*angle;
+				*area = fabs(area_poly(inter, k)*angle);
 			};
 
 			};

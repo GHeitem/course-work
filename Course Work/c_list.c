@@ -66,6 +66,8 @@ void print_list(FILE *f,list *l){
 		read(l, &a);
 		printf("\n");
 		put_plane_point(f, a);
+		printf("->%10s  %7s", l->ptr->similar == NULL ? "Not exists" : "Exists",l->ptr->isIn?"Inside":"Outside");
+
 		move(l);
 	};
 	l->ptr = tmp;

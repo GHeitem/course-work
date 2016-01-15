@@ -93,11 +93,12 @@ int inside(struct p_line *arr, int size, struct p_point a){ //Многоугольник долж
 	while ((i < size) && (position(arr[i], a) >= 0)){
 		i++;
 	};
-	return i == size;
+	return position(arr[i], a) >= 0;
 };
 struct p_point figurePoint(struct p_point *arr, int size){
 	struct p_point tmp;
 	lineXline(pointsLine(arr[0], arr[size - 2]), pointsLine(arr[1], arr[size - 1]), &tmp);
+
 	return tmp;
 }
 void linesFigure(struct p_point *arr, int size, struct p_line *arr2){
@@ -120,20 +121,36 @@ void intersection1(p_point * P, int M, p_point *Q, int N, p_point *interfig, int
 	linesFigure(Q, N, ql);
 	//Создаем циклические списки вершин многоугольников
 	int Ain = 1, Bin = 1; //Если один из многоугольников лежит внутри другого, то нет смысла искать пересечение.
-	normalize(ql, N, figurePoint(Q, N));
-	normalize(pl, M, figurePoint(P, M));
 	for (int i = 0; i < M; i++){
 		int tmp;
-		tmp = inside(ql, N, P[i]);
+		tmp = inside(ql, N, P[i])||is_vertex(Q,N,P[i]);
 		Ain &= tmp;
 		put(&A, P[i], tmp);
 	};
 	for (int j = 0; j < N; j++){
 		int tmp;
-		tmp = inside(pl, M, Q[j]);
+		tmp = inside(pl, M, Q[j]) ||is_vertex(P, M, Q[j]);
 		Bin &= tmp;
 		put(&B, Q[j], tmp);
 	};
+
+	//Определение эквивалентных точек многоугольников
+	toStart(&A);
+	while (!end(&A)){
+		p_point tmp;
+		read(&A, &tmp);
+		toStart(&B);
+		while (!end(&B)){
+			p_point tmp2;
+			read(&B, &tmp2);
+			if (eq(tmp, tmp2)){
+				B.ptr->similar = A.ptr;
+				A.ptr->similar = B.ptr;
+			};
+			move(&B);
+		};
+		move(&A);
+	}
 	free(pl);
 	free(ql);
 	if (!(Ain || Bin)){
@@ -152,12 +169,14 @@ void intersection1(p_point * P, int M, p_point *Q, int N, p_point *interfig, int
 				read(&B, &begB);
 				readnext(&B, &endB);
 				if (cutXcut(begA, endA, begB, endB, &inter) == 1){
-					put(&A, inter, 1);
-					put(&B, inter, 1);
-					move(&A);
-					move(&B);
-					B.ptr->similar = A.ptr;
-					A.ptr->similar = B.ptr;
+					if (!eq(inter, begA)&&!eq(inter,begB)&&!eq(inter,endA)&&!eq(inter,endB)){
+						put(&A, inter, 1);
+						put(&B, inter, 1);
+						move(&A);
+						move(&B);
+						B.ptr->similar = A.ptr;
+						A.ptr->similar = B.ptr;
+					};
 				};
 				move(&B);
 				flag2 = end(&B);
@@ -208,7 +227,7 @@ void intersection1(p_point * P, int M, p_point *Q, int N, p_point *interfig, int
 			t = t->next;
 			if (t->isIn){
 				flag = eq(t->a, *beg);
-				if (!flag){
+				if (!flag&&!eq(t->a,interfig[k])){
 					interfig[k++] = t->a;
 				};
 				if (t->similar != NULL){
@@ -217,8 +236,6 @@ void intersection1(p_point * P, int M, p_point *Q, int N, p_point *interfig, int
 			};
 
 		};
-		printf("Result:: ");
-		print_points(stdout, interfig, k);
 	}
 	else
 	{
@@ -227,8 +244,17 @@ void intersection1(p_point * P, int M, p_point *Q, int N, p_point *interfig, int
 	done(&A);
 	done(&B);
 	*size = k;
-};
+	printf("Result: \n");
+	print_points(stdout, interfig, k);
 
+};
+int is_vertex(p_point *P, int size, p_point a){
+	int flag=0;
+	for (int i = 0;( i < size)&&!flag; i++){
+		flag = eq(a, P[i]);
+	};
+	return flag;
+}
 double distance_between(p_point a, p_point b){
 	double t = (sqrt((a.alpha - b.alpha)*(a.alpha - b.alpha) + (a.beta - b.beta)*(a.beta - b.beta)));
 	return t;
@@ -244,5 +270,5 @@ double area_poly(p_point *poly, int vertices){
 		p = (a + b + c) / 2;
 		S += sqrt(p*(p - a)*(p - b)*(p - c));
 	};
-	return S;
+	return fabs(S);
 }
